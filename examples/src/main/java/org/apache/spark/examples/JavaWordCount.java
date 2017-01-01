@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public final class JavaWordCount {
+
   private static String textPath="D:/text.txt";
   private static final Pattern SPACE = Pattern.compile(" ");
 
