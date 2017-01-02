@@ -144,11 +144,22 @@ class SparkSqlAstBuilder(conf: SQLConf) extends AstBuilder {
    *   [PARTITION(partition_spec)];
    * }}}
    */
-  override def visitShowTable(ctx: ShowTableContext): LogicalPlan = withOrigin(ctx) {
-    if (ctx.partitionSpec != null) {
-      operationNotAllowed("SHOW TABLE EXTENDED ... PARTITION", ctx)
-    }
+//  override def visitShowTable(ctx: ShowTableContext): LogicalPlan = withOrigin(ctx) {
+//    if (ctx.partitionSpec != null) {
+//      operationNotAllowed("SHOW TABLE EXTENDED ... PARTITION", ctx)
+//    }
+//
+//    ShowTablesCommand(
+//      Option(ctx.db).map(_.getText),
+//      Option(ctx.pattern).map(string),
+//      isExtended = true)
+//  }
 
+  // the original scope is "override".
+  protected def visitShowTable(ctx: ShowTablesContext): LogicalPlan = withOrigin(ctx) {
+    //      if (ctx.partitionSpec != null) {
+    //        operationNotAllowed("SHOW TABLE EXTENDED ... PARTITION", ctx)
+    //      }
     ShowTablesCommand(
       Option(ctx.db).map(_.getText),
       Option(ctx.pattern).map(string),
@@ -896,22 +907,22 @@ class SparkSqlAstBuilder(conf: SQLConf) extends AstBuilder {
    *   [FIRST | AFTER column_name];
    * }}}
    */
-  override def visitChangeColumn(ctx: ChangeColumnContext): LogicalPlan = withOrigin(ctx) {
-    if (ctx.partitionSpec != null) {
-      operationNotAllowed("ALTER TABLE table PARTITION partition_spec CHANGE COLUMN", ctx)
-    }
-
-    if (ctx.colPosition != null) {
-      operationNotAllowed(
-        "ALTER TABLE table [PARTITION partition_spec] CHANGE COLUMN ... FIRST | AFTER otherCol",
-        ctx)
-    }
-
-    AlterTableChangeColumnCommand(
-      tableName = visitTableIdentifier(ctx.tableIdentifier),
-      columnName = ctx.identifier.getText,
-      newColumn = visitColType(ctx.colType))
-  }
+//  override def visitChangeColumn(ctx: ChangeColumnContext): LogicalPlan = withOrigin(ctx) {
+//    if (ctx.partitionSpec != null) {
+//      operationNotAllowed("ALTER TABLE table PARTITION partition_spec CHANGE COLUMN", ctx)
+//    }
+//
+//    if (ctx.colPosition != null) {
+//      operationNotAllowed(
+//        "ALTER TABLE table [PARTITION partition_spec] CHANGE COLUMN ... FIRST | AFTER otherCol",
+//        ctx)
+//    }
+//
+//    AlterTableChangeColumnCommand(
+//      tableName = visitTableIdentifier(ctx.tableIdentifier),
+//      columnName = ctx.identifier.getText,
+//      newColumn = visitColType(ctx.colType))
+//  }
 
   /**
    * Create location string.
