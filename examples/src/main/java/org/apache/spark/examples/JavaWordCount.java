@@ -32,21 +32,24 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public final class JavaWordCount {
+
+  private static String textPath="D:/text.txt";
   private static final Pattern SPACE = Pattern.compile(" ");
 
   public static void main(String[] args) throws Exception {
 
-    if (args.length < 1) {
-      System.err.println("Usage: JavaWordCount <file>");
-      System.exit(1);
-    }
+//    if (args.length < 1) {
+//      System.err.println("Usage: JavaWordCount <file>");
+//      System.exit(1);
+//    }
 
     SparkSession spark = SparkSession
-      .builder()
-      .appName("JavaWordCount")
-      .getOrCreate();
+            .builder()
+            .appName("JavaWordCount")
+            .getOrCreate();
 
-    JavaRDD<String> lines = spark.read().textFile(args[0]).javaRDD();
+    //JavaRDD<String> lines = spark.read().textFile(args[0]).javaRDD();
+    JavaRDD<String> lines = spark.read().textFile(textPath).javaRDD();
 
     JavaRDD<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
       @Override
@@ -56,20 +59,20 @@ public final class JavaWordCount {
     });
 
     JavaPairRDD<String, Integer> ones = words.mapToPair(
-      new PairFunction<String, String, Integer>() {
-        @Override
-        public Tuple2<String, Integer> call(String s) {
-          return new Tuple2<>(s, 1);
-        }
-      });
+            new PairFunction<String, String, Integer>() {
+              @Override
+              public Tuple2<String, Integer> call(String s) {
+                return new Tuple2<>(s, 1);
+              }
+            });
 
     JavaPairRDD<String, Integer> counts = ones.reduceByKey(
-      new Function2<Integer, Integer, Integer>() {
-        @Override
-        public Integer call(Integer i1, Integer i2) {
-          return i1 + i2;
-        }
-      });
+            new Function2<Integer, Integer, Integer>() {
+              @Override
+              public Integer call(Integer i1, Integer i2) {
+                return i1 + i2;
+              }
+            });
 
     List<Tuple2<String, Integer>> output = counts.collect();
     for (Tuple2<?,?> tuple : output) {
